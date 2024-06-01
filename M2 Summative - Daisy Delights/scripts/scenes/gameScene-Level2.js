@@ -17,16 +17,21 @@ class GameScene_Level2 extends Phaser.Scene {
 
         this.load.image('Level1Tiles', './assets/sprites/tilemaps/Level1.png'); 
         this.load.image('waterZone', './assets/sprites/tilemaps/water.png');
-        this.load.image('daisyTile', './assets/sprites/tilemaps/daisy.png'); // Changed the name of the daisy tile
+        this.load.image('daisyTile', './assets/sprites/tilemaps/daisy.png'); 
+        
         this.load.tilemapTiledJSON('level2Map', './assets/sprites/tilemaps/gameMap-Level2.json');
     }
 
     create() {
-        // Reset score and daisies collected
+        this.sound.stopAll(); 
+
         this.score = 0;
         this.daisiesCollected = 0;
 
-        this.sound.stopAll();
+        this.backgroundMusic = this.sound.add('Level1Theme', { loop: true });
+        this.backgroundMusic.play();
+
+        this.collectFlowerSound = this.sound.add('collectFlower');
 
         this.backgroundFar = this.add.tileSprite(0, 0, 960, 540, 'backgroundFar').setOrigin(0).setScrollFactor(0);
         this.backgroundMid = this.add.tileSprite(0, 0, 960, 540, 'backgroundMid').setOrigin(0).setScrollFactor(0);
@@ -57,13 +62,8 @@ class GameScene_Level2 extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.player.setDepth(2);
 
-        // Add collision between player and ground layer
         this.physics.add.collider(this.player, groundLayer);
-
-        // Add collision between player and daisies layer
         this.physics.add.collider(this.player, daisiesLayer, this.collectDaisies, null, this);
-
-        // Add collision between player and water layer
         this.physics.add.collider(this.player, waterLayer, this.gameOver, null, this);
 
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -103,6 +103,18 @@ class GameScene_Level2 extends Phaser.Scene {
         goal.setImmovable(true);  
         goal.body.allowGravity = false; 
         this.physics.add.collider(this.player, goal, this.checkGoal, null, this);
+
+        this.anims.create({
+            key: 'spin',
+            frames: this.anims.generateFrameNumbers('daisy', { start: 0, end: 2}),
+            frameRate: 8,
+            repeat: -1
+        });
+        
+        const daisyIcon = this.add.sprite(35, 70, 'daisy').play('spin');
+        daisyIcon.setScale(1.5);
+        daisyIcon.setDepth(100);
+        daisyIcon.setScrollFactor(0);
     }
 
     update() {
@@ -137,6 +149,7 @@ class GameScene_Level2 extends Phaser.Scene {
             this.daisiesCollected += 1;
             this.updateScoreText();
             this.updateDaisiesCollectedText();
+            this.collectFlowerSound.play();
         }
     }
     

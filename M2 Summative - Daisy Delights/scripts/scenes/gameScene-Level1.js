@@ -18,14 +18,21 @@ class GameScene_Level1 extends Phaser.Scene {
         this.load.image('Level1Tiles', './assets/sprites/tilemaps/Level1.png'); 
         this.load.image('waterZone', './assets/sprites/tilemaps/water.png');
         this.load.tilemapTiledJSON('level1Map', './assets/sprites/tilemaps/gameMap-Level1.json');
+
+        this.load.audio('Level1Theme', './assets/audio/bgm/game.mp3');
+        this.load.audio('collectFlower', './assets/audio/sfx/daisyCollect.wav')
     }
 
     create() {
-        // Reset score and berries collected
+        this.sound.stopAll(); 
+
+        this.backgroundMusic = this.sound.add('Level1Theme', { loop: true });
+        this.backgroundMusic.play();
+     
+        this.collectFlowerSound = this.sound.add('collectFlower');
+
         this.score = 0;
         this.berriesCollected = 0;
-
-        this.sound.stopAll();
 
         this.backgroundFar = this.add.tileSprite(0, 0, 960, 540, 'backgroundFar').setOrigin(0).setScrollFactor(0);
         this.backgroundMid = this.add.tileSprite(0, 0, 960, 540, 'backgroundMid').setOrigin(0).setScrollFactor(0);
@@ -131,6 +138,7 @@ class GameScene_Level1 extends Phaser.Scene {
             this.berriesCollected += 1;
             this.updateScoreText();
             this.updateBerriesCollectedText();
+            this.collectFlowerSound.play();
         }
     }
 
