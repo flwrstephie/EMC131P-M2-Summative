@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+    <title>Daisy Delights | M2 Q3 - VIRTUDAZO</title>
+    <link rel="icon" type="image/png" href="./assets/sprites/daisy icon.png">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            background-color: #f6cdcb;
+        }
+
+        canvas {
+            border: 10px solid #dbacbc;
+            position: relative; 
+        }
+
+        @font-face {
+            font-family: "FatPix";
+            src: url("./assets/fonts/FatPix-SVG.ttf") format("truetype");
+        }
+    </style>
+</head>
+<body>
+    <!-- Font Loader -->
+    <div id="fontLoader" style="font-family: 'FatPix'; position: absolute; left: -1000px; visibility: hidden;">.</div>
+
+    <script src="./scripts/phaser.min.js"></script>
+    <script src="./scripts/main.js" type="module"></script>
+</body>
+</html>
