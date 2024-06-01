@@ -67,7 +67,7 @@ class GameOverScene extends Phaser.Scene {
 
         restartButton.setInteractive();
         restartButton.on('pointerdown', () => {
-            this.scene.start('GameScene');
+            this.scene.start('GameScene_Tutorial');
         });
 
         let quitButton = this.add.text(620, 450, 'HOME', {

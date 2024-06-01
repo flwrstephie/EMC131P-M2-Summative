@@ -49,7 +49,7 @@ class WinScene extends Phaser.Scene {
             strokeThickness: 6
         }).setOrigin(0.5);
 
-        this.add.text(480, 250, 'Flowers Collected: ' + this.daisiesCollected, {
+        this.add.text(480, 250, 'Berries Collected: ' + this.daisiesCollected, {
             fontSize: '35px',
             fontFamily: 'Fatpix',
             fill: '#fde6ee',
@@ -80,8 +80,7 @@ class WinScene extends Phaser.Scene {
 
         nextLevelButton.setInteractive();
         nextLevelButton.on('pointerdown', () => {
-            // Replace 'NextScene' with the key of the next scene
-            this.scene.start('NextScene');
+            this.scene.start('GameScene_Level2');
         });
 
         let quitButton = this.add.text(690, 450, 'HOME', {

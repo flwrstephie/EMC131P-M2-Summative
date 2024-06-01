@@ -7,7 +7,7 @@ class GameScene_Level2 extends Phaser.Scene {
 
     preload() {
         this.load.image('blueberry', './assets/sprites/blueberry.png');
-        this.load.image('goal', './assets/sprites/bird.png');
+        this.load.image('bird', './assets/sprites/bird.png');
         this.load.image('backgroundFar', './assets/sprites/backgroundFar.png');  
         this.load.image('backgroundMid', './assets/sprites/backgroundMid.png');  
         this.load.image('backgroundNear', './assets/sprites/backgroundNear.png'); 
@@ -68,27 +68,6 @@ class GameScene_Level2 extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('girl', { start: 0, end: 3 }),
-            frameRate: 8,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turn',
-            frames: this.anims.generateFrameNumbers('girl', { start: 4, end: 5 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('girl', { start: 6, end: 9 }),
-            frameRate: 8,
-            repeat: -1
-        });
-
         this.cameras.main.startFollow(this.player);
         this.cameras.main.followOffset.set(0, 40);
         this.cameras.main.setZoom(1);
@@ -119,7 +98,7 @@ class GameScene_Level2 extends Phaser.Scene {
         this.updateScoreText();
         this.updateDaisiesCollectedText();
 
-        const goal = this.physics.add.sprite(2600, 625, 'goal');
+        const goal = this.physics.add.sprite(2600, 625, 'bird');
         goal.setScale(2);
         goal.setImmovable(true);  
         goal.body.allowGravity = false; 
