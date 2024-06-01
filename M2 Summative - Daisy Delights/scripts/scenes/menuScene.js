@@ -93,7 +93,7 @@ class MainMenuScene extends Phaser.Scene {
                 duration: 100,
                 yoyo: true
             });
-            this.scene.start('GameScene_Level1');
+            this.scene.start('GameScene_Level2');
         });
 
         quitButton.setInteractive().on('pointerdown', () => {

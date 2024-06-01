@@ -1,13 +1,13 @@
 import game from '../main.js';
 
-class GameScene_Level1 extends Phaser.Scene {
+class GameScene_Level2 extends Phaser.Scene {
     constructor() {
-        super({ key: 'GameScene_Level1' });
+        super({ key: 'GameScene_Level2' });
     }
 
     preload() {
         this.load.image('blueberry', './assets/sprites/blueberry.png');
-        this.load.image('goal', './assets/sprites/sign.png');
+        this.load.image('goal', './assets/sprites/bird.png');
         this.load.image('backgroundFar', './assets/sprites/backgroundFar.png');  
         this.load.image('backgroundMid', './assets/sprites/backgroundMid.png');  
         this.load.image('backgroundNear', './assets/sprites/backgroundNear.png'); 
@@ -17,13 +17,14 @@ class GameScene_Level1 extends Phaser.Scene {
 
         this.load.image('Level1Tiles', './assets/sprites/tilemaps/Level1.png'); 
         this.load.image('waterZone', './assets/sprites/tilemaps/water.png');
-        this.load.tilemapTiledJSON('level1Map', './assets/sprites/tilemaps/gameMap-Level1.json');
+        this.load.image('daisyTile', './assets/sprites/tilemaps/daisy.png'); // Changed the name of the daisy tile
+        this.load.tilemapTiledJSON('level2Map', './assets/sprites/tilemaps/gameMap-Level2.json');
     }
 
     create() {
-        // Reset score and berries collected
+        // Reset score and daisies collected
         this.score = 0;
-        this.berriesCollected = 0;
+        this.daisiesCollected = 0;
 
         this.sound.stopAll();
 
@@ -31,31 +32,38 @@ class GameScene_Level1 extends Phaser.Scene {
         this.backgroundMid = this.add.tileSprite(0, 0, 960, 540, 'backgroundMid').setOrigin(0).setScrollFactor(0);
         this.backgroundNear = this.add.tileSprite(0, 0, 960, 540, 'backgroundNear').setOrigin(0).setScrollFactor(0);
 
-        const map = this.make.tilemap({ key: 'level1Map' });
+        const map = this.make.tilemap({ key: 'level2Map' });
         const platformTiles = map.addTilesetImage('Level1', 'Level1Tiles');
         const waterZone = map.addTilesetImage('water', 'waterZone');
+        const daisyTiles = map.addTilesetImage('daisy', 'daisyTile'); // Changed the name of the daisy tiles
 
         const groundLayer = map.createLayer('ground', platformTiles, 0, 0);
         const grassLayer = map.createLayer('grass', platformTiles, 0, 0);
         grassLayer.setDepth(1);
 
-        const berriesLayer = map.createLayer('berries', platformTiles, 0, 0);
-        berriesLayer.setCollisionByProperty({ collides: true });
-        berriesLayer.setTileIndexCallback([2], this.collectBerry, this);
+        const daisiesLayer = map.createLayer('flowers', daisyTiles, 0, 0); // Changed the layer name to daisiesLayer
+        daisiesLayer.setCollisionByProperty({ collides: true });
+        daisiesLayer.setTileIndexCallback([2], this.collectDaisies, this);
 
         const waterLayer = map.createLayer('water', waterZone, 0, 0);
         waterLayer.setCollisionByExclusion([-1]);
 
-        this.player = this.physics.add.sprite(230, 800, 'girl');
+        groundLayer.setCollisionByExclusion([-1]);
+
+        this.player = this.physics.add.sprite(230, 700, 'girl');
         this.player.body.setSize(30, 90); 
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.player.setDepth(2);
 
-        groundLayer.setCollisionByExclusion([-1]);
+        // Add collision between player and ground layer
         this.physics.add.collider(this.player, groundLayer);
-        this.physics.add.collider(this.player, berriesLayer, this.collectBerry, null, this);
+
+        // Add collision between player and daisies layer
+        this.physics.add.collider(this.player, daisiesLayer, this.collectDaisies, null, this);
+
+        // Add collision between player and water layer
         this.physics.add.collider(this.player, waterLayer, this.gameOver, null, this);
 
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -108,15 +116,10 @@ class GameScene_Level1 extends Phaser.Scene {
         this.scoreText.setScrollFactor(0);
         this.daisiesCollectedText.setScrollFactor(0);
 
-        const blueberryIcon = this.add.sprite(35, 70, 'blueberry');
-        blueberryIcon.setScale(1.5);
-        blueberryIcon.setDepth(100);
-        blueberryIcon.setScrollFactor(0);
-
         this.updateScoreText();
-        this.updateBerriesCollectedText();
+        this.updateDaisiesCollectedText();
 
-        const goal = this.physics.add.sprite(4260, 750, 'goal');
+        const goal = this.physics.add.sprite(2600, 625, 'goal');
         goal.setScale(2);
         goal.setImmovable(true);  
         goal.body.allowGravity = false; 
@@ -139,60 +142,7 @@ class GameScene_Level1 extends Phaser.Scene {
             this.player.setVelocityY(-330);
         }
 
-        this.backgroundFar.tilePositionX = this.cameras.main.scrollX * 0.25;
-        this.backgroundMid.tilePositionX = this.cameras.main.scrollX * 0.5;
-        this.backgroundNear.tilePositionX = this.cameras.main.scrollX * 0.75;
-    }
-
-    collectBerry(player, tile) {
-        if (tile) {
-            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
-            this.score += 10;
-            this.berriesCollected += 1;
-            this.updateScoreText();
-            this.updateBerriesCollectedText();
-        }
-    }
-
-    updateScoreText() {
-        this.scoreText.setText('Score: ' + this.score);
-    }
-
-    updateBerriesCollectedText() {
-        this.daisiesCollectedText.setText('x ' + this.berriesCollected);
-    }
-
-    checkGoal(player, goal) {
-        if (this.berriesCollected >= 10) {
-            // Pass the score and berriesCollected as data to the WinScene2
-            this.scene.start('WinScene2', { score: this.score, daisiesCollected: this.berriesCollected });
-        } else {
-            if (!this.needMoreBerriesShown) {
-                this.showNeedMoreBerriesMessage();
-                this.needMoreBerriesShown = true;
-            }
-        }
-    }
-    
-
-    showNeedMoreBerriesMessage() {
-        const message = this.add.text(this.player.x - 50, this.player.y - 50, 'Hmm... I need more berries', {
-            fontSize: '20px',
-            fontFamily: 'Fatpix',
-            fill: '#fde6ee',
-            stroke: '#eca03e',
-            strokeThickness: 4
-        }).setOrigin(0.5).setDepth(100);
-
-        this.time.delayedCall(5000, () => {
-            message.destroy();
-        });
-    }
-
-
-    gameOver() {
-        this.scene.pause(); 
-        this.scene.start('GameOverScene2', { score: this.score, daisiesCollected: this.berriesCollected });
+        this.updateBackgroundPositions();
     }
 
     updateBackgroundPositions() {
@@ -200,6 +150,53 @@ class GameScene_Level1 extends Phaser.Scene {
         this.backgroundMid.tilePositionX = this.cameras.main.scrollX * 0.5;
         this.backgroundNear.tilePositionX = this.cameras.main.scrollX * 0.75;
     }
+
+    collectDaisies(player, tile) {
+        if (tile) {
+            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
+            this.score += 10;
+            this.daisiesCollected += 1;
+            this.updateScoreText();
+            this.updateDaisiesCollectedText();
+        }
+    }
+    
+    updateScoreText() {
+        this.scoreText.setText('Score: ' + this.score);
+    }
+
+    updateDaisiesCollectedText() {
+        this.daisiesCollectedText.setText('x ' + this.daisiesCollected);
+    }
+
+    gameOver() {
+        this.scene.pause(); 
+        this.scene.start('GameOverScene3', { score: this.score, daisiesCollected: this.daisiesCollected });
+    }
+
+    checkGoal(player, goal) {
+        if (this.daisiesCollected === 5) {
+            this.scene.start('WinScene3', { score: this.score, daisiesCollected: this.daisiesCollected }); // Pass both score and daisiesCollected
+        } else {
+            const notEnoughDaisiesText = this.add.text(2550, 600, 'Not enough flowers', {
+                fontSize: '20px',
+                fontFamily: 'Fatpix',
+                fill: '#fde6ee',
+                stroke: '#eca03e',
+                strokeThickness: 4
+            }).setOrigin(0.5).setDepth(10);
+            this.tweens.add({
+                targets: notEnoughDaisiesText,
+                alpha: 0,
+                duration: 2000,
+                ease: 'Power1',
+                onComplete: function () {
+                    notEnoughDaisiesText.destroy();
+                }
+            });
+        }
+    }
+    
 }
 
-export default GameScene_Level1;
+export default GameScene_Level2;
