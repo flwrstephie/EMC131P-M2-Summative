@@ -164,7 +164,7 @@ class GameScene_Level1 extends Phaser.Scene {
     
 
     showNeedMoreBerriesMessage() {
-        const message = this.add.text(this.player.x - 50, this.player.y - 50, 'Hmm... I need more berries', {
+        const message = this.add.text(4200, 700, 'Hmm... I need more berries', {
             fontSize: '20px',
             fontFamily: 'Fatpix',
             fill: '#fde6ee',
