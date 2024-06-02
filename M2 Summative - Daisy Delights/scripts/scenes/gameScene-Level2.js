@@ -40,13 +40,13 @@ class GameScene_Level2 extends Phaser.Scene {
         const map = this.make.tilemap({ key: 'level2Map' });
         const platformTiles = map.addTilesetImage('Level1', 'Level1Tiles');
         const waterZone = map.addTilesetImage('water', 'waterZone');
-        const daisyTiles = map.addTilesetImage('daisy', 'daisyTile'); // Changed the name of the daisy tiles
+        const daisyTiles = map.addTilesetImage('daisy', 'daisyTile'); 
 
         const groundLayer = map.createLayer('ground', platformTiles, 0, 0);
         const grassLayer = map.createLayer('grass', platformTiles, 0, 0);
         grassLayer.setDepth(1);
 
-        const daisiesLayer = map.createLayer('flowers', daisyTiles, 0, 0); // Changed the layer name to daisiesLayer
+        const daisiesLayer = map.createLayer('flowers', daisyTiles, 0, 0); 
         daisiesLayer.setCollisionByProperty({ collides: true });
         daisiesLayer.setTileIndexCallback([2], this.collectDaisies, this);
 
@@ -168,7 +168,7 @@ class GameScene_Level2 extends Phaser.Scene {
 
     checkGoal(player, goal) {
         if (this.daisiesCollected === 5) {
-            this.scene.start('WinScene3', { score: this.score, daisiesCollected: this.daisiesCollected }); // Pass both score and daisiesCollected
+            this.scene.start('WinScene3', { score: this.score, daisiesCollected: this.daisiesCollected }); 
         } else {
             const notEnoughDaisiesText = this.add.text(2550, 600, 'Not enough flowers', {
                 fontSize: '20px',

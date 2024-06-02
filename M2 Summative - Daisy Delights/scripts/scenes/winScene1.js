@@ -93,7 +93,6 @@ class WinScene extends Phaser.Scene {
     
         nextLevelButton.setInteractive();
         nextLevelButton.on('pointerdown', () => {
-            // Replace 'GameScene_Level2' with the key of your next level scene
             this.scene.start('GameScene_Level1');
         });
     
